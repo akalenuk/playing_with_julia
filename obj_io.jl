@@ -39,7 +39,6 @@ module ObjIO
   function tests()
     vertexes = [(-1.0, -1.0, -1.0), (1.0, -1.0, -1.0), (-1.0, 1.0, -1.0), (1.0, 1.0, -1.0), (-1.0, -1.0, 1.0), (1.0, -1.0, 1.0), (-1.0, 1.0, 1.0), (1.0, 1.0, 1.0)]
     faces  = [(1, 2, 3), (3, 2, 4), (8, 6, 7), (6, 7, 5)]
-    println("Writing test obj")
     open("test.obj", "w") do file
       write(file, str_from_vertexes(vertexes))
       write(file, str_from_faces(faces))
@@ -48,8 +47,13 @@ module ObjIO
       text = read(file, String)
       new_vertexes = vertexes_from_str(text)
       new_faces = faces_from_str(text)
-      println(new_vertexes)
-      println(new_faces)
+      if new_vertexes != vertexes
+        println("Vertexes IO failed")
+      end
+      if new_faces != faces
+        println("faces IO failed")
+      end
+      rm("test.obj")
     end
   end
 end
