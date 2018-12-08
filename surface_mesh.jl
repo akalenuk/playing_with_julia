@@ -67,7 +67,16 @@ module SurfaceMesh
         end
       end
     end
-    return (points, faces)
+
+    # shift the points to match the target surface better
+    better_points = []
+    for point in points
+      shift = vscale(gradient_in_point(point), distance_in_point(point))
+      better_point = vsum(point, shift)
+      push!(better_points, better_point)
+    end
+
+    return (better_points, faces)
   end
 
   function distance_to_gradient_operator(distance_in_point)
@@ -77,12 +86,16 @@ module SurfaceMesh
       d100 = distance_in_point(vsum(point, (eps, 0., 0.)))
       d010 = distance_in_point(vsum(point, (0., eps, 0.)))
       d001 = distance_in_point(vsum(point, (0., 0., eps)))
-      return (1. / (d-d100), 1. / (d-d010), 1. / (d-d001))
+      return ((d100 - d)/eps, (d010 - d)/eps, (d001 - d)/eps)
     end
   end
 
   function vsum(a, b)
     return tuple([ai + bi for (ai, bi) in zip(a, b)]...)
+  end
+
+  function vscale(a, x)
+    return tuple([ai * x for ai in a]...)
   end
 
   function tests()
