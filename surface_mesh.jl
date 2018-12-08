@@ -71,7 +71,7 @@ module SurfaceMesh
     # shift the points to match the target surface better
     better_points = []
     for point in points
-      shift = vscale(gradient_in_point(point), distance_in_point(point))
+      shift = vscale(gradient_in_point(point), -distance_in_point(point))
       better_point = vsum(point, shift)
       push!(better_points, better_point)
     end
