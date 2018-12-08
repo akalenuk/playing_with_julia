@@ -1,2 +1,2 @@
 all:
-	./julia run_tests.jl
+	../julia-1.0.2/bin/julia run_tests.jl
