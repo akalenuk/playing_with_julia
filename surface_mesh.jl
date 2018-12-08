@@ -67,6 +67,7 @@ module SurfaceMesh
         end
       end
     end
+    return (points, faces)
   end
 
   function distance_to_gradient_operator(distance_in_point)
@@ -90,6 +91,6 @@ module SurfaceMesh
     end
     distance_function = function(x) return sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 1 end
     gradient_function = distance_to_gradient_operator(distance_function)
-    build_3d_mesh((0, 0, 0), (1, 1, 1), 0.25, distance_function, gradient_function)
+    build_3d_mesh((-1, -1, -1), (1, 1, 1), 0.25, distance_function, gradient_function)
   end
 end
