@@ -24,7 +24,7 @@ module SurfaceMesh
             push!(points, (x, y + cube_size, z))
             push!(points, (x, y + cube_size, z + cube_size))
             push!(points, (x, y, z + cube_size))
-            if (d < d100)
+            if (d > d100)
 	      push!(faces, (start_index, start_index + 1, start_index + 2))
 	      push!(faces, (start_index, start_index + 2, start_index + 3))
             else
@@ -56,9 +56,9 @@ module SurfaceMesh
             push!(points, (x + cube_size, y, z))
             push!(points, (x + cube_size, y + cube_size, z))
             push!(points, (x, y + cube_size, z))
-            if (d < d001)
+            if (d > d001)
 	      push!(faces, (start_index, start_index + 1, start_index + 2))
-	      push!(faces, (start_index, start_index + 2, start_index + 3))
+              push!(faces, (start_index, start_index + 2, start_index + 3))
             else
 	      push!(faces, (start_index, start_index + 2, start_index + 1))
 	      push!(faces, (start_index, start_index + 3, start_index + 2))
