@@ -32,6 +32,38 @@ module SurfaceMesh
 	      push!(faces, (start_index, start_index + 3, start_index + 2))
             end
           end
+
+          # y-wall
+          if(sign(d) != sign(d010))
+            start_index = length(points) + 1
+            push!(points, (x, y, z))
+            push!(points, (x + cube_size, y, z))
+            push!(points, (x + cube_size, y, z + cube_size))
+            push!(points, (x, y, z + cube_size))
+            if (d < d010)
+	      push!(faces, (start_index, start_index + 1, start_index + 2))
+	      push!(faces, (start_index, start_index + 2, start_index + 3))
+            else
+	      push!(faces, (start_index, start_index + 2, start_index + 1))
+	      push!(faces, (start_index, start_index + 3, start_index + 2))
+            end
+          end
+
+          # z-wall
+          if(sign(d) != sign(d001))
+            start_index = length(points) + 1
+            push!(points, (x, y, z))
+            push!(points, (x + cube_size, y, z))
+            push!(points, (x + cube_size, y + cube_size, z))
+            push!(points, (x, y + cube_size, z))
+            if (d < d001)
+	      push!(faces, (start_index, start_index + 1, start_index + 2))
+	      push!(faces, (start_index, start_index + 2, start_index + 3))
+            else
+	      push!(faces, (start_index, start_index + 2, start_index + 1))
+	      push!(faces, (start_index, start_index + 3, start_index + 2))
+            end
+          end
         end
       end
     end
