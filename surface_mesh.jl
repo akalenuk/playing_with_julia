@@ -98,12 +98,35 @@ module SurfaceMesh
     return tuple([ai * x for ai in a]...)
   end
 
+  function vdot(a, b)
+    return sum([ai * bi for (ai, bi) in zip(a, b)])
+  end
+
+  function vnormalized(a)
+    d = sqrt(sum(vdot(a, a)))
+    return vscale(a, 1. / d)
+  end
+
   function tests()
     if vsum((1,2,3), (4,5,6)) != (5,7,9)
       println("vsum is broken")
     end
     distance_function = function(x) return sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 1 end
     gradient_function = distance_to_gradient_operator(distance_function)
-    build_3d_mesh((-1, -1, -1), (1, 1, 1), 0.25, distance_function, gradient_function)
+    points, faces = build_3d_mesh((-1, -1, -1), (1, 1, 1), 0.25, distance_function, gradient_function)
+    for face in faces
+      for i in 1:3
+        j = i == 3 ? 1 : i + 1
+        edge_to_normal = vdot(
+            points[face[i]], 
+            vnormalized(
+              vsum(
+                points[face[i]], 
+                vscale(points[face[j]], -1.))))
+        if edge_to_normal < 0 || edge_to_normal > 0.2
+          println("Mesh generator is broken")
+        end
+      end
+    end
   end
 end
