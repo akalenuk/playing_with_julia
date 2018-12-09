@@ -16,22 +16,18 @@ end
 
 bump_from_uv = function(uv)
   # bump-map coordinates
-  j = uv[1] * bump_map_w
-  i = uv[2] * bump_map_h
-  j0 = 1 + floor(Int, j)
-  j1 = min(1 + floor(Int, j) + 1, bump_map_w)
-  i0 = 1 + floor(Int, i)
-  i1 = min(1 + floor(Int, i) + 1, bump_map_h)
+  j = 1 + uv[1] * bump_map_w
+  i = 1 + uv[2] * bump_map_h
+  j0 = floor(Int, j)
+  j1 = min(floor(Int, j) + 1, bump_map_w)
+  i0 = floor(Int, i)
+  i1 = min(floor(Int, i) + 1, bump_map_h)
 #  bump = bump_map[i0, j0]
-  bump = bump_map[i1, j1] * (j - j0) * (i - i0) 
-       + bump_map[i1, j0] * (j1 - j) * (i - i0) 
-       + bump_map[i0, j0] * (j1 - j) * (i1 - i) 
-       + bump_map[i0, j1] * (j - j0) * (i1 - i) 
+  bump = bump_map[i1, j1] * (j - j0) * (i - i0)   # syntax thing, you can't just split a string into several
+  bump += bump_map[i1, j0] * (j1 - j) * (i - i0) 
+  bump += bump_map[i0, j0] * (j1 - j) * (i1 - i) 
+  bump += bump_map[i0, j1] * (j - j0) * (i1 - i) 
   return bump
-end
-
-for u in 0:0.01:1
-  println(bump_from_uv((u, 0.0625)))
 end
 
 
