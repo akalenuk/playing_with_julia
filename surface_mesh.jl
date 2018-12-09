@@ -71,8 +71,10 @@ module SurfaceMesh
     # shift the points to match the target surface better
     better_points = []
     for point in points
-      shift = vscale(gradient_in_point(point), -distance_in_point(point))
-      better_point = vsum(point, shift)
+      gradient_shift = vscale(gradient_in_point(point), -distance_in_point(point))
+      # limiter gives worse approximation quality, but nicer mesh
+      cube_limited_shift = vlimit(gradient_shift, -cube_size / 2., +cube_size / 2.)
+      better_point = vsum(point, cube_limited_shift)
       push!(better_points, better_point)
     end
 
@@ -88,6 +90,10 @@ module SurfaceMesh
       d001 = distance_in_point(vsum(point, (0., 0., eps)))
       return ((d100 - d)/eps, (d010 - d)/eps, (d001 - d)/eps)
     end
+  end
+
+  function vlimit(a, min_ai, max_ai)
+    return tuple([min(max(min_ai, ai), max_ai) for ai in a]...)
   end
 
   function vsum(a, b)
@@ -111,6 +117,9 @@ module SurfaceMesh
     if vsum((1,2,3), (4,5,6)) != (5,7,9)
       println("vsum is broken")
     end
+    if vlimit((1, 2, 3), 1.5, 2.5) != (1.5, 2, 2.5)
+      println("vlimit is broken")
+    end
     distance_function = function(x) return sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 1 end
     gradient_function = distance_to_gradient_operator(distance_function)
     points, faces = build_3d_mesh((-1, -1, -1), (1, 1, 1), 0.25, distance_function, gradient_function)
@@ -123,8 +132,8 @@ module SurfaceMesh
               vsum(
                 points[face[i]], 
                 vscale(points[face[j]], -1.))))
-        if edge_to_normal < 0 || edge_to_normal > 0.2
-          println("Mesh generator is broken")
+        if edge_to_normal < -0.2 || edge_to_normal > 0.3
+          println("Mesh generator is broken ", edge_to_normal)
         end
       end
     end
