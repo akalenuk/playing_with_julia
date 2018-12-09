@@ -4,9 +4,37 @@ include("surface_mesh.jl")
 ObjIO.tests()
 SurfaceMesh.tests()
 
-distance_function = function(x) return sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 1 end
+# some checker bump-map. It can be any noise function for instance
+bump_map_w = 64
+bump_map_h = 64
+bump_map = zeros(Float64, bump_map_w, bump_map_h)
+for i in 1:bump_map_h
+  for j in 1:bump_map_w
+    bump_map[i, j] = xor(((i - 1) % 16 < 8), ((j - 1) % 16 < 8)) ? 1.0 : 0.0
+  end
+end
+
+distance_function = function(x) 
+  d = sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 10 
+  uv = (x[1] / 10., x[2] / 10.)
+  if uv[1] > 0. && uv[1] < 1. && uv[2] > 0. && uv[2] < 1.
+    # bump-map coordinates
+    j = uv[1] * bump_map_w
+    i = uv[2] * bump_map_h
+    j0 = 1 +  floor(Int, j)
+    j1 = 1 + (floor(Int, j) + 1) % bump_map_w
+    i0 = 1 +  floor(Int, i)
+    i1 = 1 + (floor(Int, i) + 1) % bump_map_h
+    bump = bump_map[i0, j0] * (j - j0) * (i - i0) 
+         + bump_map[i0, j1] * (j1 - j) * (i - i0) 
+         + bump_map[i1, j1] * (j1 - j) * (i1 - i) 
+         + bump_map[i1, j0] * (j - j0) * (i1 - i) 
+    d -= bump
+  end
+  return d
+end
 gradient_function = SurfaceMesh.distance_to_gradient_operator(distance_function)
-(vertexes, faces) = SurfaceMesh.build_3d_mesh((-1, -1, -1), (1, 1, 1), 0.25, distance_function, gradient_function)
+(vertexes, faces) = SurfaceMesh.build_3d_mesh((-10, -10, 5), (10, 10, 10), 0.25, distance_function, gradient_function)
 
 open("test.obj", "w") do file
   write(file, ObjIO.str_from_vertexes(vertexes))
