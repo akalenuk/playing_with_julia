@@ -74,7 +74,8 @@ module SurfaceMesh
       gradient_shift = vscale(gradient_in_point(point), -distance_in_point(point))
       # limiter gives worse approximation quality, but nicer mesh
       cube_limited_shift = vlimit(gradient_shift, -cube_size / 2., +cube_size / 2.)
-      better_point = vsum(point, cube_limited_shift)
+#      better_point = vsum(point, cube_limited_shift)
+      better_point = vsum(point, gradient_shift)
       push!(better_points, better_point)
     end
 
