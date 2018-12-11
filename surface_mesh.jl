@@ -73,13 +73,12 @@ module SurfaceMesh
     for point in points
       gradient_shift = vscale(gradient_in_point(point), -distance_in_point(point))
       # limiter gives worse approximation quality, but nicer mesh
-      # there is also conceptual deficiency (bug in my head) here. Limiter prohibits mesh to be consistent in some cases
 #      cube_limited_shift = vlimit(gradient_shift, -cube_size / 2., +cube_size / 2.)
 #      better_point = vsum(point, cube_limited_shift)
       # let's try limiting shift if necessary by renormalizing the whole thing
       max_axial_shift = max([abs(di) for di in gradient_shift]...)
-      if max_axial_shift > cube_size / 2.
-        gradient_shift = vscale(gradient_shift, (cube_size / 2.) / max_axial_shift)
+      if max_axial_shift > cube_size  # let's limit to the cube size since there are cases where this is the case. Doesn't exclude intersects though
+        gradient_shift = vscale(gradient_shift, cube_size / max_axial_shift)
       end
       better_point = vsum(point, gradient_shift)
       push!(better_points, better_point)
