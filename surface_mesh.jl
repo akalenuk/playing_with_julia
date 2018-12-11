@@ -138,7 +138,7 @@ module SurfaceMesh
               vsum(
                 points[face[i]], 
                 vscale(points[face[j]], -1.))))
-        if edge_to_normal < -0.2 || edge_to_normal > 0.3
+        if edge_to_normal < 0 || edge_to_normal > 0.2
           println("Mesh generator is broken ", edge_to_normal)
         end
       end
