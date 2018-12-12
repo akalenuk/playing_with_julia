@@ -40,7 +40,7 @@ distance_function = function(x)
   return d
 end
 gradient_function = SurfaceMesh.distance_to_gradient_operator(distance_function)
-(vertexes, faces) = SurfaceMesh.build_3d_mesh((-10, -10, 5), (10, 10, 11), 0.25, distance_function, gradient_function)
+(vertexes, faces) = SurfaceMesh.build_3d_mesh((-10, -10, 5), (10, 10, 11), 0.125, distance_function, gradient_function)
 
 open("test.obj", "w") do file
   write(file, ObjIO.str_from_vertexes(vertexes))
