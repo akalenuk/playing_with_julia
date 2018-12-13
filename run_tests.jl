@@ -30,6 +30,13 @@ bump_from_uv = function(uv)
   return bump
 end
 
+if max([bump_from_uv((0.1, v)) for v in 0.1:0.001:0.15]...) != 1.
+  println("bilinear interpolation is broken")
+end
+
+if min([bump_from_uv((u, 0.1)) for u in 0.1:0.001:0.15]...) != 0.
+  println("bilinear interpolation is broken")
+end
 
 distance_function = function(x) 
   d = sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 10 
