@@ -68,13 +68,33 @@ module SurfaceMesh
       end
     end
 
+    # remove the redundant points
+    xyz_to_is = Dict()
+    for (i, point) in enumerate(points)
+      if haskey(xyz_to_is, point)
+        push!(xyz_to_is[point], i)
+      else
+        xyz_to_is[point] = [i]
+      end
+    end
+    less_points = []
+    old_is_to_i = Dict()
+    for (i, xyz_is) in enumerate(xyz_to_is)
+      push!(less_points, xyz_is[1])
+      for j in xyz_is[2]
+        old_is_to_i[j] = i
+      end
+    end
+    new_faces = []
+    for face in faces
+      push!(new_faces, tuple([old_is_to_i[i] for i in face]...))
+    end
+
     # shift the points to match the target surface better
     better_points = []
-    for point in points
+    for point in less_points
       gradient_shift = vscale(gradient_in_point(point), -distance_in_point(point))
       # limiter gives worse approximation quality, but nicer mesh
-#      cube_limited_shift = vlimit(gradient_shift, -cube_size / 2., +cube_size / 2.)
-#      better_point = vsum(point, cube_limited_shift)
       # let's try limiting shift if necessary by renormalizing the whole thing
       max_axial_shift = max([abs(di) for di in gradient_shift]...)
       if max_axial_shift > cube_size  # let's limit to the cube size since there are cases where this is the case. Doesn't exclude intersects though
@@ -84,7 +104,7 @@ module SurfaceMesh
       push!(better_points, better_point)
     end
 
-    return (better_points, faces)
+    return (better_points, new_faces)
   end
 
   function distance_to_gradient_operator(distance_in_point)
