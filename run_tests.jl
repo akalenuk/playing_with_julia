@@ -41,13 +41,13 @@ end
 distance_function = function(x) 
   d = sqrt(x[1]^2 + x[2]^2 + x[3]^2) - 10 
   uv = (x[1] / 10., x[2] / 10.)
-  if uv[1] > 0. && uv[1] < 1. && uv[2] > 0. && uv[2] < 1.
-    d -= bump_from_uv(uv)
-  end
+#  if uv[1] > 0. && uv[1] < 1. && uv[2] > 0. && uv[2] < 1.
+#    d -= bump_from_uv(uv)
+#  end
   return d
 end
 gradient_function = SurfaceMesh.distance_to_gradient_operator(distance_function)
-(vertexes, faces) = SurfaceMesh.build_3d_mesh((-10, -10, 5), (10, 10, 11), 0.125, distance_function, gradient_function)
+(vertexes, faces) = SurfaceMesh.build_3d_mesh((-10, -10, -10), (10, 10, 10), 1., distance_function, gradient_function)
 
 open("test.obj", "w") do file
   write(file, ObjIO.str_from_vertexes(vertexes))
