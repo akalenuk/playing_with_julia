@@ -16,3 +16,5 @@ module Sploxels
         # z-axis -1:+1
     end
 end
+# idea: if a shift goes out of the cube, the target
+# cube should become marginal while retaining topology.
